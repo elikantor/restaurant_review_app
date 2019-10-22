@@ -68,6 +68,7 @@ class CommandLineInterface
             end
     end
 
+
     def change_user_info
         puts "Enter your name"
         new_name = gets.chomp
@@ -79,6 +80,22 @@ class CommandLineInterface
         new_neighborhood_work = gets.chomp
         user = User.find_by(name: @user.name)
         user.update(name: new_name, favorite_food_genre: new_food_genre, home_location: new_neighborhood_home, work_study_location: new_neighborhood_work)
+    end
+  
+    def restaurant_list
+        Restaurant.all.each do |restaurant|
+            rest_arr = []
+            restaurant_id = restaurant.id
+            rest_arr << "Restaurant: " + restaurant.name
+            rest_arr << "Neighborhood: " + restaurant.location
+            Review.all.each do |review|
+                if review.restaurant_id == restaurant.id
+                    rest_arr << "Rating: " + review.rating.to_s
+                end
+            end
+            print rest_arr.join(" - ")
+        end
+        print "\n"
         signed_in
     end
 
