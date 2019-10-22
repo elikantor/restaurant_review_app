@@ -48,20 +48,37 @@ class CommandLineInterface
         prompt = TTY::Prompt.new
         user_input = prompt.select ("What would you like to do") do |menu|
         menu.choice "Write a review"
-        menu.choice "Get a restaurant recommendation for home"
-        menu.choice "Get a restaurant recommendation for working/studying"
+        menu.choice "Get a restaurant recommendation for where you live"
+        menu.choice "Get a restaurant recommendation for where you work/study"
         menu.choice "Log out"
         end
         
             if user_input == "Write a review"
                 write_review
-            elsif user_input == "Get a restaurant recoomendation for home"
-                sign_up
-            elsif user_input == "Get a restaurant recoomendation for working/studying"
-                sign_up
+            elsif user_input == "Get a restaurant recommendation for where you live"
+                restaurant_rec_home
+            elsif user_input == "Get a restaurant recommendation for where you work/study"
+                restaurant_rec_work_study
             elsif user_input == "Log out"
                 home_screen
             end
+    end
+
+    def restaurant_rec_home
+        arr = []
+        Review.all.select do |review|
+            if review.rating >= 4
+                arr << review.restaurant_id
+            end
+        end
+    p arr
+        arr.select do |id|
+            if review.restaurant.location == User.find(@user_id).location
+                binding.pry
+                puts review.restaurant.name
+            end
+        end
+        signed_in
     end
 
     def write_review
@@ -77,7 +94,7 @@ class CommandLineInterface
             
             if !Restaurant.exists?(name: res_name)
                 puts "This restaurant does not exist in our database."
-                puts "What is the restaurants food genre?"
+                puts "What is the restaurant's food genre?"
                 food_genre = gets.chomp
                 puts "What is the location of this restaurant?"
                 location = gets.chomp
@@ -98,6 +115,7 @@ class CommandLineInterface
             #     end
             # end
         Review.create({user_id: name_id, restaurant_id: rest_id, content: review, rating: number_rating })
+        signed_in
     end
 
 end
