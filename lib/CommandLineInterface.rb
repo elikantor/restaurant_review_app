@@ -71,8 +71,19 @@ class CommandLineInterface
     end
 
     def restaurant_list
-        arr = []
-        puts Restaurant.all.name
+        Restaurant.all.each do |restaurant|
+            rest_arr = []
+            restaurant_id = restaurant.id
+            rest_arr << "Restaurant: " + restaurant.name
+            rest_arr << "Neighborhood: " + restaurant.location
+            Review.all.each do |review|
+                if review.restaurant_id == restaurant.id
+                    rest_arr << "Rating: " + review.rating.to_s
+                end
+            end
+            print rest_arr.join(" - ")
+        end
+        print "\n"
         signed_in
     end
 
