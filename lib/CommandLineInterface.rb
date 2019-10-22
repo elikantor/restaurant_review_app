@@ -48,42 +48,91 @@ class CommandLineInterface
         prompt = TTY::Prompt.new
         user_input = prompt.select ("What would you like to do") do |menu|
         menu.choice "Write a review"
+        menu.choice "See restaurants that have been reviewed"
         menu.choice "Get a restaurant recommendation for where you live"
         menu.choice "Get a restaurant recommendation for where you work/study"
+        menu.choice "Get a restaurant recommendation for your favorite food genre"
         menu.choice "Log out"
         end
         
             if user_input == "Write a review"
                 write_review
+            elsif user_input == "See restaurants that have been reviewed"
+                restaurant_list
             elsif user_input == "Get a restaurant recommendation for where you live"
                 restaurant_rec_home
             elsif user_input == "Get a restaurant recommendation for where you work/study"
                 restaurant_rec_work_study
+            elsif user_input == "Get a restaurant recommendation for your favorite food genre"
+                restaurant_rec_food_genre
             elsif user_input == "Log out"
                 home_screen
             end
     end
 
+    def restaurant_list
+        arr = []
+        puts Restaurant.all.name
+        signed_in
+    end
+
     def restaurant_rec_home
         arr = []
-        Review.all.select do |review|
+        print_arr = []
+        Review.all.each do |review|
             if review.rating >= 4
                 arr << review.restaurant_id
             end
         end
-    p arr
-        arr.select do |id|
-            if review.restaurant.location == User.find(@user_id).location
-                binding.pry
-                puts review.restaurant.name
+
+        arr.each do |id|
+            if Restaurant.find(id).location == User.find(@user_id).home_location
+                print_arr << Restaurant.find(id).name
             end
         end
+        puts print_arr
+        signed_in
+    end
+
+    def restaurant_rec_work_study
+        arr = []
+        print_arr = []
+        Review.all.each do |review|
+            if review.rating >= 4
+                arr << review.restaurant_id
+            end
+        end
+
+        arr.each do |id|
+            if Restaurant.find(id).location == User.find(@user_id).work_study_location
+                print_arr << Restaurant.find(id).name
+            end
+        end
+        puts print_arr
+        signed_in
+    end
+
+    def restaurant_rec_food_genre
+        arr = []
+        print_arr = []
+        Review.all.each do |review|
+            if review.rating >= 4
+                arr << review.restaurant_id
+            end
+        end
+
+        arr.each do |id|
+            if Restaurant.find(id).food_genre == User.find(@user_id).favorite_food_genre
+                print_arr << Restaurant.find(id).name
+            end
+        end
+        puts print_arr
         signed_in
     end
 
     def write_review
         name_id = @user_id
-
+        rest_id = 0
         puts "Please enter the name of a restaurant."
             res_name = gets.chomp.capitalize
             Restaurant.all.select do |restaurant|
