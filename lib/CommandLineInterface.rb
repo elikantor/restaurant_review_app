@@ -8,15 +8,14 @@ class CommandLineInterface
         menu.choice "Sign In"
         menu.choice "Sign Up"
         menu.choice "Exit"
+    end    
+        if user_input == "Sign In"
+            choose_user
+        elsif user_input == "Sign Up"
+            sign_up
+        elsif user_input == "Exit"
+            puts "Goodbye"
         end
-        
-            if user_input == "Sign In"
-                choose_user
-            elsif user_input == "Sign Up"
-                sign_up
-            elsif user_input == "Exit"
-                puts "Goodbye"
-            end
     end
 
     def choose_user
@@ -41,6 +40,7 @@ class CommandLineInterface
         puts "Please enter what neighborhood you work in/go to school." 
             work = gets.chomp
         User.create({name: name, favorite_food_genre: genre, home_location: home, work_study_location: work})
+        @user = User.find_by(name: name)
         signed_in
     end
 
@@ -51,22 +51,38 @@ class CommandLineInterface
         menu.choice "See restaurants that have been reviewed"
         menu.choice "Your recommended restaurants"
         menu.choice "Change User Info"
+        menu.choice "Delete Account"
         menu.choice "Log out"
+    end
+        if user_input == "Write a review"
+            write_review
+        elsif user_input == "See restaurants that have been reviewed"
+            restaurant_list
+        elsif user_input == "Your recommended restaurants"
+            recommendation_types
+        elsif user_input == "Change User Info"
+            change_user_info
+        elsif user_input == "Delete Account"
+            delete_account_check
+        elsif user_input == "Log out"
+            home_screen
         end
-        
-            if user_input == "Write a review"
-                write_review
-            elsif user_input == "See restaurants that have been reviewed"
-                restaurant_list
-            elsif user_input == "Your recommended restaurants"
-                recommendation_types
-            elsif user_input == "Change User Info"
-                change_user_info
-            elsif user_input == "Log out"
-                home_screen
-            end
     end
 
+    def delete_account_check
+        prompt = TTY::Prompt.new
+        user_input = prompt.select ("Are you sure you want to delete your account?") do |menu|
+            menu.choice "Confirm"
+            menu.choice "Go Back"
+        end
+            if user_input == "Confirm"
+                @user.destroy
+                puts "Your account has been deleted."
+                home_screen
+            elsif user_input == "Go Back"
+                signed_in
+            end
+    end
 
     def change_user_info
         puts "Enter your name"
