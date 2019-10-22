@@ -40,6 +40,8 @@ class CommandLineInterface
         puts "Please enter what neighborhood you work in/go to school." 
             work = gets.chomp
         User.create({name: name, favorite_food_genre: genre, home_location: home, work_study_location: work})
+        puts "User has been created!" 
+        press_key_to_cont
         @user = User.find_by(name: name)
         signed_in
     end
@@ -109,13 +111,24 @@ class CommandLineInterface
 
         if user_input == "Get restaurant recommendations for where you live"
             restaurant_rec_home
+            press_key_to_cont
+            signed_in 
         elsif user_input == "Get restaurant recommendations for where you work/study"
             restaurant_rec_work_study
+            press_key_to_cont
+            signed_in 
         elsif user_input == "Get restaurant recommendations for your favorite food genre"
             restaurant_rec_food_genre
+            press_key_to_cont
+            signed_in 
         elsif user_input == "Go back"
             signed_in
         end
+    end
+
+    def press_key_to_cont
+        prompt = TTY::Prompt.new
+        prompt.keypress("Press any key to continue.")
     end
 
 end
