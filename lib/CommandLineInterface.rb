@@ -1,6 +1,8 @@
 class CommandLineInterface
     require 'pry'
+    require_relative './methods.rb'
 
+    p average_rating ("Burger King")
     def home_screen
         prompt = TTY::Prompt.new
         user_input = prompt.select ("Welcome to Flatiron Yelp, the restaurant review app") do |menu|
@@ -10,14 +12,24 @@ class CommandLineInterface
         end
         
             if user_input == "Sign In"
-                puts "signed in"
                 choose_user
             elsif user_input == "Sign Up"
-                puts "signed up"
                 sign_up
             elsif user_input == "Exit"
                 puts "Goodbye"
             end
+    end
+
+    def choose_user
+        prompt = TTY::Prompt.new
+        user_input = prompt.select ("Please select your username") do |menu|
+            User.all.each do |user|
+                menu.choice "#{user.name}"
+            end
+        end
+        p User.find_by(name: user_input)
+        @user = User.find_by(name: user_input)
+        signed_in
     end
 
     def sign_up
@@ -33,25 +45,13 @@ class CommandLineInterface
         signed_in
     end
 
-    def choose_user
-        prompt = TTY::Prompt.new
-        user_input = prompt.select ("Please select your username") do |menu|
-            User.all.each do |user|
-                menu.choice "#{user.name}"
-            end
-        end
-        @user_id = User.find_by(name: user_input).id
-        signed_in
-    end
-
     def signed_in
         prompt = TTY::Prompt.new
-        user_input = prompt.select ("What would you like to do") do |menu|
+        user_input = prompt.select ("Welcome #{@user.name}. What would you like to do") do |menu|
         menu.choice "Write a review"
         menu.choice "See restaurants that have been reviewed"
-        menu.choice "Get a restaurant recommendation for where you live"
-        menu.choice "Get a restaurant recommendation for where you work/study"
-        menu.choice "Get a restaurant recommendation for your favorite food genre"
+        menu.choice "Your recommended restaurants"
+        menu.choice "Change User Info"
         menu.choice "Log out"
         end
         
@@ -59,34 +59,66 @@ class CommandLineInterface
                 write_review
             elsif user_input == "See restaurants that have been reviewed"
                 restaurant_list
-            elsif user_input == "Get a restaurant recommendation for where you live"
-                restaurant_rec_home
-            elsif user_input == "Get a restaurant recommendation for where you work/study"
-                restaurant_rec_work_study
-            elsif user_input == "Get a restaurant recommendation for your favorite food genre"
-                restaurant_rec_food_genre
+            elsif user_input == "Your recommended restaurants"
+                recommendation_types
+            elsif user_input == "Change User Info"
+                change_user_info
             elsif user_input == "Log out"
                 home_screen
             end
     end
 
-    def restaurant_list
-        arr = []
-        puts Restaurant.all.name
+    def change_user_info
+        puts "Enter your name"
+        new_name = gets.chomp
+        puts "Enter your food genre"
+        new_food_genre = gets.chomp
+        puts "Enter the neighborhood you live in"
+        new_neighborhood_home = gets.chomp
+        puts "Enter the neighborhood you work in"
+        new_neighborhood_work = gets.chomp
+        user = User.find_by(name: @user.name)
+        user.update(name: new_name, favorite_food_genre: new_food_genre, home_location: new_neighborhood_home, work_study_location: new_neighborhood_work)
         signed_in
+    end
+
+    def recommendation_types
+        prompt = TTY::Prompt.new
+        user_input = prompt.select ("What would you like to do") do |menu|
+            menu.choice "Get restaurant recommendations for where you live"
+            menu.choice "Get restaurant recommendations for where you work/study"
+            menu.choice "Get restaurant recommendations for your favorite food genre"
+            menu.choice "Go back"
+        end
+
+        if user_input == "Get restaurant recommendations for where you live"
+            restaurant_rec_home
+        elsif user_input == "Get restaurant recommendations for where you work/study"
+            restaurant_rec_work_study
+        elsif user_input == "Get restaurant recommendations for your favorite food genre"
+            restaurant_rec_food_genre
+        elsif user_input == "Go back"
+            signed_in
+        end
     end
 
     def restaurant_rec_home
         arr = []
         print_arr = []
-        Review.all.each do |review|
-            if review.rating >= 4
-                arr << review.restaurant_id
+        # Review.all.each do |review|
+        #     if review.rating >= 4
+        #         arr << review.restaurant_id
+        #     end
+        # end
+
+        Restaurant.all.each do |restaurant|
+            if average_rating(restaurant.name) >= 4
+                arr << restaurant.id
             end
         end
 
         arr.each do |id|
-            if Restaurant.find(id).location == User.find(@user_id).home_location
+            if Restaurant.find(id).location == @user.home_location
                 print_arr << Restaurant.find(id).name
             end
         end
@@ -104,7 +136,7 @@ class CommandLineInterface
         end
 
         arr.each do |id|
-            if Restaurant.find(id).location == User.find(@user_id).work_study_location
+            if Restaurant.find(id).location == @user.work_study_location
                 print_arr << Restaurant.find(id).name
             end
         end
@@ -122,7 +154,7 @@ class CommandLineInterface
         end
 
         arr.each do |id|
-            if Restaurant.find(id).food_genre == User.find(@user_id).favorite_food_genre
+            if Restaurant.find(id).food_genre == @user_id.favorite_food_genre
                 print_arr << Restaurant.find(id).name
             end
         end
@@ -131,7 +163,7 @@ class CommandLineInterface
     end
 
     def write_review
-        name_id = @user_id
+        name_id = @user.id
         rest_id = 0
         puts "Please enter the name of a restaurant."
             res_name = gets.chomp.capitalize
