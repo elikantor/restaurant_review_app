@@ -71,7 +71,6 @@ def restaurant_rec_food_genre
         end
     end
     print "\n"
-    
 end
 
 def write_review
