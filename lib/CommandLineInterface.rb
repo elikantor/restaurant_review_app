@@ -1,10 +1,17 @@
 class CommandLineInterface
     require 'pry'
     require_relative './methods.rb'
+    require 'paint'
 
     def home_screen
+        font = TTY::Font.new(:doom)
+        pastel = Pastel.new
+        10.times {print "\n"}
+        puts pastel.red(font.write("Welcome  to"))
+        puts pastel.red(font.write("Flatiron Yelp"))
+        puts Paint["The restaurant review app.", :blue, :bold] 
         prompt = TTY::Prompt.new
-        user_input = prompt.select ("Welcome to Flatiron Yelp, the restaurant review app") do |menu|
+        user_input = prompt.select () do |menu|
         menu.choice "Sign In"
         menu.choice "Sign Up"
         menu.choice "Exit"
@@ -20,7 +27,7 @@ class CommandLineInterface
 
     def choose_user
         prompt = TTY::Prompt.new
-        user_input = prompt.select ("Please select your username") do |menu|
+        user_input = prompt.select Paint[("Please select your username"), :blue, :bright] do |menu|
             User.all.each do |user|
                 menu.choice "#{user.name}"
             end
@@ -48,7 +55,7 @@ class CommandLineInterface
 
     def signed_in
         prompt = TTY::Prompt.new
-        user_input = prompt.select ("Hello #{@user.name}. What would you like to do") do |menu|
+        user_input = prompt.select Paint[("Hello #{@user.name}. What would you like to do"), :blue, :bright] do |menu|
         menu.choice "Write a review"
         menu.choice "See restaurants that have been reviewed"
         menu.choice "Your recommended restaurants"
@@ -73,7 +80,7 @@ class CommandLineInterface
 
     def delete_account_check
         prompt = TTY::Prompt.new
-        user_input = prompt.select ("Are you sure you want to delete your account?") do |menu|
+        user_input = prompt.select font.write("Are you sure you want to delete your account?") do |menu|
             menu.choice "Confirm"
             menu.choice "Go Back"
         end
@@ -102,7 +109,7 @@ class CommandLineInterface
 
     def recommendation_types
         prompt = TTY::Prompt.new
-        user_input = prompt.select ("What would you like to do") do |menu|
+        user_input = prompt.select Paint[("What would you like to do"), :red] do |menu|
             menu.choice "Get restaurant recommendations for where you live"
             menu.choice "Get restaurant recommendations for where you work/study"
             menu.choice "Get restaurant recommendations for your favorite food genre"
