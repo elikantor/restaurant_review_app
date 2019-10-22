@@ -40,9 +40,19 @@ end
 def restaurant_rec_home
     6.times { print "\n" }
     Restaurant.all.select do |restaurant|
+        rest_arr = []
         if restaurant.location == @user.home_location
             if average_rating(restaurant.name) >=4
-                puts restaurant.name
+                restaurant_id = restaurant.id
+                rest_arr << "Restaurant: " + restaurant.name
+                rest_arr << "Neighborhood: " + restaurant.location
+                Review.all.each do |review|
+                    if review.restaurant_id == restaurant.id
+                        rest_arr << "Rating: " + review.rating.to_s
+                        rest_arr << "Review: " + review.content
+                    end
+                end
+                puts rest_arr.join("  -  ")
             end
         end
     end
@@ -52,9 +62,19 @@ end
 def restaurant_rec_work_study
     6.times { print "\n"}
     Restaurant.all.select do |restaurant|
+        rest_arr = []
         if restaurant.location == @user.work_study_location
             if average_rating(restaurant.name) >=4
-                puts restaurant.name
+                restaurant_id = restaurant.id
+                rest_arr << "Restaurant: " + restaurant.name
+                rest_arr << "Neighborhood: " + restaurant.location
+                Review.all.each do |review|
+                    if review.restaurant_id == restaurant.id
+                        rest_arr << "Rating: " + review.rating.to_s
+                        rest_arr << "Review: " + review.content
+                    end
+                end
+                puts rest_arr.join("  -  ")
             end
         end
     end
@@ -64,9 +84,19 @@ end
 def restaurant_rec_food_genre
     6.times { print "\n"}
     Restaurant.all.select do |restaurant|
+        rest_arr = []
         if restaurant.food_genre == @user.favorite_food_genre
             if average_rating(restaurant.name) >=4
-                puts restaurant.name
+                restaurant_id = restaurant.id
+                rest_arr << "Restaurant: " + restaurant.name
+                rest_arr << "Neighborhood: " + restaurant.location
+                Review.all.each do |review|
+                    if review.restaurant_id == restaurant.id
+                        rest_arr << "Rating: " + review.rating.to_s
+                        rest_arr << "Review: " + review.content
+                    end
+                end
+                puts rest_arr.join("  -  ")
             end
         end
     end
