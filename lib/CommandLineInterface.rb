@@ -6,7 +6,7 @@ class CommandLineInterface
     def home_screen
         font = TTY::Font.new(:doom)
         pastel = Pastel.new
-        10.times {print "\n"}
+        25.times {print "\n"}
         puts pastel.red(font.write("Welcome  to"))
         puts pastel.red(font.write("Flatiron Yelp"))
         puts Paint["The restaurant review app.", :blue, :bold] 
@@ -80,13 +80,14 @@ class CommandLineInterface
 
     def delete_account_check
         prompt = TTY::Prompt.new
-        user_input = prompt.select font.write("Are you sure you want to delete your account?") do |menu|
+        user_input = prompt.select Paint[("Are you sure you want to delete your account?"), :blue, :bright] do |menu|
             menu.choice "Confirm"
             menu.choice "Go Back"
         end
             if user_input == "Confirm"
                 @user.destroy
                 puts "Your account has been deleted."
+                press_key_to_cont
                 home_screen
             elsif user_input == "Go Back"
                 signed_in
@@ -104,6 +105,8 @@ class CommandLineInterface
         new_neighborhood_work = gets.chomp
         user = User.find_by(name: @user.name)
         user.update(name: new_name, favorite_food_genre: new_food_genre, home_location: new_neighborhood_home, work_study_location: new_neighborhood_work)
+        puts "User information updated!"
+        press_key_to_cont
         signed_in
     end
 
