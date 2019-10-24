@@ -6,7 +6,7 @@ class CommandLineInterface
     def home_screen
         font = TTY::Font.new(:doom)
         pastel = Pastel.new
-        25.times {print "\n"}
+        add_a_bunch_of_lines_to_clear_CL
         puts pastel.red(font.write("Welcome  to"))
         puts pastel.red(font.write("Flatiron Yelp"))
         puts Paint["The restaurant review app.", :blue, :bold] 
@@ -85,6 +85,11 @@ class CommandLineInterface
             menu.choice "Go Back"
         end
             if user_input == "Confirm"
+                Review.all.select do |review|
+                    if review.user_id == @user.id
+                        review.delete
+                    end
+                end
                 @user.destroy
                 puts "Your account has been deleted."
                 press_key_to_cont
