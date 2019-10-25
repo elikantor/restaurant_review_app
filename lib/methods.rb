@@ -19,7 +19,11 @@ def average_rating(res_name)
             count += 1
         end
     end
-    rating = rating / count
+    if count == 0
+        rating = 0
+    else
+        rating = rating / count
+    end
 end
 
 def restaurant_list
@@ -86,7 +90,7 @@ def check_user_reviews
         end
     end
     press_key_to_cont
-    home_screen
+    signed_in
 end
 
 def restaurant_rec_home
@@ -98,20 +102,15 @@ def restaurant_rec_home
                 restaurant_id = restaurant.id
                 rest_arr << "Restaurant: " + restaurant.name
                 rest_arr << "Neighborhood: " + restaurant.location
+                puts rest_arr.join("  -  ")
                 Review.all.each do |review|
                     if review.restaurant_id == restaurant.id
-                        rest_arr << "Rating: " + review.rating.to_s
-                        rest_arr << "Review: " + review.content + "\n"
-                        # rest_arr << "Price: " + restaurant.($rating)
-                        # if restaurant.price_rating == nil
-                        #     rest_arr << "N/A"
-                        # else restaurant.price_rating..times do 
-                        #     rest_arr << "$"
-                        #     end
-                        # end
+                        rev_arr = []
+                        rev_arr << "Rating: " + review.rating.to_s
+                        rev_arr << "Review: " + review.content + "\n"
+                        puts rev_arr.join("  -  ")
                     end
                 end
-                puts rest_arr.join("  -  ")
             end
         end
     end
@@ -127,13 +126,15 @@ def restaurant_rec_work_study
                 restaurant_id = restaurant.id
                 rest_arr << "Restaurant: " + restaurant.name
                 rest_arr << "Neighborhood: " + restaurant.location
+                puts rest_arr.join("  -  ")
                 Review.all.each do |review|
                     if review.restaurant_id == restaurant.id
-                        rest_arr << "Rating: " + review.rating.to_s
-                        rest_arr << "Review: " + review.content
+                        rev_arr = []
+                        rev_arr << "Rating: " + review.rating.to_s
+                        rev_arr << "Review: " + review.content
+                        puts rev_arr.join("  -  ")
                     end
                 end
-                puts rest_arr.join("  -  ")
             end
         end
     end
@@ -150,13 +151,15 @@ def restaurant_rec_food_genre
                 rest_arr << "Restaurant: " + restaurant.name
                 rest_arr << "Neighborhood: " + restaurant.location
                 rest_arr << "Food Genre: " + restaurant.food_genre
+                puts rest_arr.join("  -  ")
                 Review.all.each do |review|
                     if review.restaurant_id == restaurant.id
-                        rest_arr << "Rating: " + review.rating.to_s
-                        rest_arr << "Review: " + review.content
+                        rev_arr = []
+                        rev_arr << "Rating: " + review.rating.to_s
+                        rev_arr << "Review: " + review.content
+                        puts rev_arr.join("  -  ")
                     end
                 end
-                puts rest_arr.join("  -  ")
             end
         end
     end
