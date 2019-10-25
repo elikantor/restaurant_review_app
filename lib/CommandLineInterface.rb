@@ -57,6 +57,7 @@ class CommandLineInterface
         prompt = TTY::Prompt.new
         user_input = prompt.select Paint[("Hello #{@user.name}. What would you like to do"), :blue, :bright] do |menu|
         menu.choice "Write a review"
+        menu.choice "Check the reviews you wrote"
         menu.choice "See restaurants that have been reviewed"
         menu.choice "Your recommended restaurants"
         menu.choice "Change User Info"
@@ -65,6 +66,8 @@ class CommandLineInterface
     end
         if user_input == "Write a review"
             write_review
+        elsif user_input == "Check the reviews you wrote"
+            check_user_reviews
         elsif user_input == "See restaurants that have been reviewed"
             restaurant_list
         elsif user_input == "Your recommended restaurants"
@@ -87,7 +90,7 @@ class CommandLineInterface
             if user_input == "Confirm"
                 Review.all.select do |review|
                     if review.user_id == @user.id
-                        review.delete
+                        review.destroy
                     end
                 end
                 @user.destroy
