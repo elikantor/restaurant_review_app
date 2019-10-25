@@ -78,6 +78,17 @@ def restaurant_list
     signed_in
 end
 
+def check_user_reviews
+    string = ""
+    Review.all.select do |review|
+        if review.user_id == @user.id
+           puts "Restaurant: " + Restaurant.find(review.restaurant_id).name + " - " + "Rating: " + review.rating.to_s + " - " + "Comment: " + review.content
+        end
+    end
+    press_key_to_cont
+    home_screen
+end
+
 def restaurant_rec_home
     add_a_bunch_of_lines_to_clear_CL
     Restaurant.all.select do |restaurant|
